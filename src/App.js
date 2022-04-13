@@ -1,7 +1,7 @@
 import { Container } from '@mui/material';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, child, get } from "firebase/database";
-import React from 'react';
+import { useEffect, useState } from 'react';
 import Inventory from './components/Inventory';
 
 const firebaseConfig = {
@@ -15,22 +15,17 @@ const firebaseConfig = {
   measurementId: "G-CQ2P0875MP"
 };
 
-// const app = initializeApp(firebaseConfig);
 initializeApp(firebaseConfig);
-// const database = getDatabase(app);
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {inventory:"nothing"};
-  }
-  componentDidMount(){
+function App(props) {
+  const [inventory, setInventory] = useState('nothing');
+  useEffect(() => {
     const dbRef = ref(getDatabase());
     let firebase_data;
     get(child(dbRef, `zekoff`)).then((snapshot) => {
       if (snapshot.exists()) {
         firebase_data = snapshot.val();
-        this.setState({inventory:JSON.stringify(firebase_data)});
+        setInventory(JSON.stringify(firebase_data));
         console.log(firebase_data);
       } else {
         console.log("No data available");
@@ -38,14 +33,10 @@ class App extends React.Component {
     }).catch((error) => {
       console.error(error);
     });
-  }
-  render() {
-    return (
-      <Container>
-        <Inventory inventory={this.state.inventory} />
-      </Container>
-    );
-  }
+  });
+  return <Container>
+    <Inventory inventory={inventory} />
+  </Container>
 }
 
 export default App;
