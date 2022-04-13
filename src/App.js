@@ -1,4 +1,4 @@
-import './App.css';
+import { Container } from '@mui/material';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, child, get } from "firebase/database";
 import React from 'react';
@@ -23,7 +23,6 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {inventory:"nothing"};
-    this.handleChange = this.handleChange.bind(this);
   }
   componentDidMount(){
     const dbRef = ref(getDatabase());
@@ -42,14 +41,10 @@ class App extends React.Component {
   }
   render() {
     return (
-      <div className="App">
+      <Container>
         <Inventory inventory={this.state.inventory} />
-      </div>
+      </Container>
     );
-  }
-
-  handleChange() {
-    this.setState({inventory:"Some inventory items"})
   }
 }
 
