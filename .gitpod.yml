@@ -1,5 +1,5 @@
 tasks:
   - init: |
-      echo 'TODO: build project'
+      npm install create-react-app firebase
     command: |
-      echo 'TODO: start app'
+      npm start
