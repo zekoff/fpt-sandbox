@@ -22,11 +22,9 @@ function App(props) {
   const [inventory, setInventory] = useState(['nothing']);
   useEffect(() => {
     onValue(inventoryRef, (snapshot) => {
-      const data = snapshot.val();
-      console.log(data)
-      setInventory(data);
+      setInventory(snapshot.val());
     });
-  });
+  }, []);
   return (
     <Container>
       <Inventory inventory={inventory} />
