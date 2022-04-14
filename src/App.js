@@ -1,6 +1,6 @@
 import { Container } from '@mui/material';
 import { initializeApp } from 'firebase/app';
-import { getDatabase, ref, child, get } from "firebase/database";
+import { getDatabase, ref, onValue } from "firebase/database";
 import { useEffect, useState } from 'react';
 import Inventory from './components/Inventory';
 
@@ -16,27 +16,22 @@ const firebaseConfig = {
 };
 
 initializeApp(firebaseConfig);
+const inventoryRef = ref(getDatabase(), 'zekoff/inventory');
 
 function App(props) {
-  const [inventory, setInventory] = useState('nothing');
+  const [inventory, setInventory] = useState(['nothing']);
   useEffect(() => {
-    const dbRef = ref(getDatabase());
-    let firebase_data;
-    get(child(dbRef, `zekoff`)).then((snapshot) => {
-      if (snapshot.exists()) {
-        firebase_data = snapshot.val();
-        setInventory(JSON.stringify(firebase_data));
-        console.log(firebase_data);
-      } else {
-        console.log("No data available");
-      }
-    }).catch((error) => {
-      console.error(error);
+    onValue(inventoryRef, (snapshot) => {
+      const data = snapshot.val();
+      console.log(data)
+      setInventory(data);
     });
   });
-  return <Container>
-    <Inventory inventory={inventory} />
-  </Container>
+  return (
+    <Container>
+      <Inventory inventory={inventory} />
+    </Container>
+  )
 }
 
 export default App;
