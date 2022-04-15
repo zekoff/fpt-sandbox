@@ -18,7 +18,10 @@ function Inventory(props) {
     const [newItemText, setNewItemText] = useState("");
     const inventory_list = props.inventory.map(item =>
         <ListItem disablePadding secondaryAction={
-            <IconButton>
+            <IconButton onClick={() => {
+                const trimmedInventory = props.inventory.filter(element => element !== item);
+                set(props.firebaseDb, trimmedInventory);
+            }}>
                 <DeleteIcon />
             </IconButton>
         }>
