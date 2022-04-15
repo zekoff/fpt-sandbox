@@ -27,7 +27,7 @@ function App(props) {
   }, []);
   return (
     <Container>
-      <Inventory inventory={inventory} />
+      <Inventory inventory={inventory} firebaseDb={inventoryRef} />
     </Container>
   )
 }
