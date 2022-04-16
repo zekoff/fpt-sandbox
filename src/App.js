@@ -21,7 +21,7 @@ const inventoryRef = ref(getDatabase(), 'zekoff/inventory');
 const usersRef = ref(getDatabase(), 'users');
 
 function App(props) {
-  const [inventory, setInventory] = useState(['nothing']);
+  const [inventory, setInventory] = useState([]);
   const [users, setUsers] = useState([]);
   useEffect(() => {
     onValue(inventoryRef, (snapshot) => {
