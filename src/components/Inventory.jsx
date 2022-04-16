@@ -1,9 +1,10 @@
-import { IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import { IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import DeleteIcon from "@mui/icons-material/Delete"
 import CategoryIcon from '@mui/icons-material/Category';
 import { useState } from "react";
 import { set } from "firebase/database";
+import ImageMapping from "../util/ImageMapping"
 
 function addInventoryItem(newItemText, setNewItemText, inventory, dbRef) {
     console.log(newItemText);
@@ -27,13 +28,15 @@ function Inventory(props) {
         }>
             <ListItemButton>
                 <ListItemIcon>
-                    <CategoryIcon />
+                    {/* <CategoryIcon /> */}
+                    {ImageMapping['Health Kit']}
                 </ListItemIcon>
                 <ListItemText primary={item} />
             </ListItemButton>
         </ListItem>
     );
     return <>
+        <Typography variant="h4">Inventory</Typography>
         <List>
             {inventory_list}
         </List>

@@ -3,6 +3,7 @@ import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, onValue } from "firebase/database";
 import { useEffect, useState } from 'react';
 import Inventory from './components/Inventory';
+import UserList from './components/UserList';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBjYabqy9_P67Ka8Fzwj3ZsXn3CN4HhVkE",
@@ -17,16 +18,22 @@ const firebaseConfig = {
 
 initializeApp(firebaseConfig);
 const inventoryRef = ref(getDatabase(), 'zekoff/inventory');
+const usersRef = ref(getDatabase(), 'users');
 
 function App(props) {
   const [inventory, setInventory] = useState(['nothing']);
+  const [users, setUsers] = useState([]);
   useEffect(() => {
     onValue(inventoryRef, (snapshot) => {
       setInventory(snapshot.val());
     });
+    onValue(usersRef, (snapshot) => {
+      setUsers(snapshot.val());
+    });
   }, []);
   return (
     <Container>
+      <UserList users={users} />
       <Inventory inventory={inventory} firebaseDb={inventoryRef} />
     </Container>
   )
