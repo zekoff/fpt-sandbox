@@ -1,6 +1,6 @@
 import { Button, Container } from '@mui/material';
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { getAuth, signOut } from 'firebase/auth';
 import { getDatabase, ref, onValue } from "firebase/database";
 import { useEffect, useState } from 'react';
 import Inventory from './components/Inventory';
@@ -21,11 +21,13 @@ const firebaseConfig = {
 initializeApp(firebaseConfig);
 const inventoryRef = ref(getDatabase(), 'zekoff/inventory');
 const usersRef = ref(getDatabase(), 'users');
+const authorizedUsersRef = ref(getDatabase(), 'authorized_users');
 
 function App(props) {
   const [inventory, setInventory] = useState([]);
   const [users, setUsers] = useState([]);
   const [currentUser, setCurrentUser] = useState(getAuth().currentUser);
+  const [authorizedUserList, setAuthorizedUserList] = useState([]);
   useEffect(() => {
     getAuth().onAuthStateChanged(user => setCurrentUser(getAuth().currentUser));
     onValue(inventoryRef, (snapshot) => {
@@ -34,14 +36,19 @@ function App(props) {
     onValue(usersRef, (snapshot) => {
       setUsers(snapshot.val());
     });
+    onValue(authorizedUsersRef, (snapshot) => {
+      setAuthorizedUserList(snapshot.val());
+    });
   }, []);
   if (!currentUser) {
     return <Button onClick={signInWithGoogle}>Sign In</Button>
   }
+  if (!authorizedUserList.includes(currentUser.uid)) return <p>Not authorized.</p>
   return (
     <Container>
       <UserList users={users} />
       <Inventory inventory={inventory} firebaseDb={inventoryRef} />
+      <Button onClick={()=>{signOut(getAuth())}}>Log Out</Button>
     </Container>
   )
 }
