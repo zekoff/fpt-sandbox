@@ -1,11 +1,13 @@
 import { Button, Container } from '@mui/material';
 import { initializeApp } from 'firebase/app';
-import { getAuth, signOut } from 'firebase/auth';
+import { getAuth } from 'firebase/auth';
 import { getDatabase, ref, onValue } from "firebase/database";
 import { useEffect, useState } from 'react';
 import Inventory from './components/Inventory';
 import UserList from './components/UserList';
+import Layout from './components/Layout';
 import { signInWithGoogle } from './util/AuthHelper.js';
+import { Routes, Route } from 'react-router-dom';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBjYabqy9_P67Ka8Fzwj3ZsXn3CN4HhVkE",
@@ -46,9 +48,12 @@ function App(props) {
   if (!authorizedUserList.includes(currentUser.uid)) return <p>Not authorized.</p>
   return (
     <Container>
-      <UserList users={users} />
-      <Inventory inventory={inventory} firebaseDb={inventoryRef} />
-      <Button onClick={()=>{signOut(getAuth())}}>Log Out</Button>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index path="users" element={<UserList users={users} />} />
+          <Route path="inventory" element={<Inventory inventory={inventory} firebaseDb={inventoryRef} />} />
+        </Route>
+      </Routes>
     </Container>
   )
 }
