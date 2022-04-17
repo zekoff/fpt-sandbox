@@ -1,7 +1,6 @@
 import { IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import DeleteIcon from "@mui/icons-material/Delete"
-import CategoryIcon from '@mui/icons-material/Category';
 import { useState } from "react";
 import { set } from "firebase/database";
 import ImageMapping from "../util/ImageMapping"
@@ -18,7 +17,7 @@ function addInventoryItem(newItemText, setNewItemText, inventory, dbRef) {
 function Inventory(props) {
     const [newItemText, setNewItemText] = useState("");
     const inventory_list = props.inventory.map(item =>
-        <ListItem disablePadding secondaryAction={
+        <ListItem key={item} disablePadding secondaryAction={
             <IconButton onClick={() => {
                 const trimmedInventory = props.inventory.filter(element => element !== item);
                 set(props.firebaseDb, trimmedInventory);

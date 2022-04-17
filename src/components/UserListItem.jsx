@@ -3,7 +3,7 @@ import ImageMapping from "../util/ImageMapping.jsx";
 
 function UserListItem(props) {
     return (
-        <ListItem>
+        <ListItem key={props.name}>
             <ListItemAvatar>
                 <Avatar>
                     {ImageMapping[props.image]}
