@@ -1,10 +1,8 @@
-import { Typography, Button, List, ListItem, ListItemText } from "@mui/material";
+import { Typography, List, ListItem, ListItemText } from "@mui/material";
 import { Outlet, Link } from "react-router-dom";
-import { signOut } from 'firebase/auth';
-import { useAuth } from "reactfire";
+import { SignOutButton } from "./Authentication";
 
 function Layout(props) {
-    const auth = useAuth();
     return <>
         <Typography variant="h3">Family Point Tracker</Typography>
         <List>
@@ -20,7 +18,7 @@ function Layout(props) {
             </ListItem>
         </List>
         <Outlet />
-        <Button onClick={() => { signOut(auth) }}>Log Out</Button>
+        <SignOutButton />
     </>
 }
 

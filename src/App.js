@@ -1,11 +1,11 @@
-import { Button, Container } from '@mui/material';
+import { Container } from '@mui/material';
 import { ref } from "firebase/database";
 import Inventory from './components/Inventory';
 import UserList from './components/UserList';
 import Layout from './components/Layout';
-import { signInWithGoogle } from './util/AuthHelper.js';
 import { Routes, Route } from 'react-router-dom';
-import { useAuth, useDatabase, useDatabaseListData, useUser } from 'reactfire';
+import { useDatabase, useDatabaseListData, useUser } from 'reactfire';
+import { SignInButton } from './components/Authentication';
 
 function App(props) {
   const { data: currentUser } = useUser();
@@ -15,9 +15,8 @@ function App(props) {
   const { data: users} = useDatabaseListData(usersRef);
   const authorizedUsersRef = ref(useDatabase(), 'authorized_users')
   const { data: authorizedUsers} = useDatabaseListData(authorizedUsersRef);
-  const auth = useAuth();
   if (!currentUser) {
-    return <Button onClick={()=>signInWithGoogle(auth)}>Sign In</Button>
+    return <SignInButton />
   }
   if (!authorizedUsers?.includes(currentUser.uid)) return <p>Not authorized.</p>
   return (
