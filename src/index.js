@@ -4,14 +4,40 @@ import { CssBaseline } from '@mui/material';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
+import { AuthProvider, FirebaseAppProvider, useFirebaseApp, DatabaseProvider } from 'reactfire';
+import { getAuth } from 'firebase/auth';
+import { getDatabase } from 'firebase/database';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBjYabqy9_P67Ka8Fzwj3ZsXn3CN4HhVkE",
+  authDomain: "fpt-sandbox.firebaseapp.com",
+  databaseURL: "https://fpt-sandbox-default-rtdb.firebaseio.com",
+  projectId: "fpt-sandbox",
+  storageBucket: "fpt-sandbox.appspot.com",
+  messagingSenderId: "620589844068",
+  appId: "1:620589844068:web:2d576ae7d28cbb723fc171",
+  measurementId: "G-CQ2P0875MP"
+};
+
+function FirebaseWrapper(props) {
+  return (
+    <AuthProvider sdk={getAuth(useFirebaseApp())}>
+      <DatabaseProvider sdk={getDatabase(useFirebaseApp())}>
+        <App />
+      </DatabaseProvider>
+    </AuthProvider>
+  )
+}
 
 const container = document.getElementById('root');
 createRoot(container).render(
   <React.StrictMode>
     <CssBaseline />
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <FirebaseAppProvider firebaseConfig={firebaseConfig}>
+      <BrowserRouter>
+        <FirebaseWrapper />
+      </BrowserRouter>
+    </FirebaseAppProvider>
   </React.StrictMode>,
 );
 
