@@ -2,11 +2,11 @@ import { IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText,
 import TextField from "@mui/material/TextField";
 import DeleteIcon from "@mui/icons-material/Delete"
 import { useState } from "react";
-import { set } from "firebase/database";
+import { set, ref } from "firebase/database";
 import ImageMapping from "../util/ImageMapping"
+import { useDatabase } from "reactfire";
 
 function addInventoryItem(newItemText, setNewItemText, inventory, dbRef) {
-    console.log(newItemText);
     set(dbRef, [
         ...inventory,
         newItemText
@@ -14,14 +14,17 @@ function addInventoryItem(newItemText, setNewItemText, inventory, dbRef) {
     setNewItemText("");
 }
 
+function removeInventoryItem(item, inventory, inventoryRef) {
+    const trimmedInventory = inventory.filter(element => element !== item);
+    set(inventoryRef, trimmedInventory);
+}
+
 function Inventory(props) {
     const [newItemText, setNewItemText] = useState("");
+    const inventoryRef = ref(useDatabase(), 'zekoff/inventory');
     const inventory_list = props.inventory.map(item =>
         <ListItem key={item} disablePadding secondaryAction={
-            <IconButton onClick={() => {
-                const trimmedInventory = props.inventory.filter(element => element !== item);
-                set(props.firebaseDb, trimmedInventory);
-            }}>
+            <IconButton onClick={() => removeInventoryItem(item, props.inventory, inventoryRef)}>
                 <DeleteIcon />
             </IconButton>
         }>
@@ -42,7 +45,7 @@ function Inventory(props) {
         <form
             onSubmit={(event) => {
                 event.preventDefault();
-                addInventoryItem(newItemText, setNewItemText, props.inventory, props.firebaseDb);
+                addInventoryItem(newItemText, setNewItemText, props.inventory, inventoryRef);
             }}
         >
             <TextField

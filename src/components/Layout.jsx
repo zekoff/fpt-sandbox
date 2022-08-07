@@ -1,6 +1,6 @@
-import { Typography, Button, List, ListItem, ListItemText } from "@mui/material";
+import { Typography, List, ListItem, ListItemText } from "@mui/material";
 import { Outlet, Link } from "react-router-dom";
-import { getAuth, signOut } from 'firebase/auth';
+import { SignOutButton } from "./Authentication";
 
 function Layout(props) {
     return <>
@@ -18,7 +18,7 @@ function Layout(props) {
             </ListItem>
         </List>
         <Outlet />
-        <Button onClick={() => { signOut(getAuth()) }}>Log Out</Button>
+        <SignOutButton />
     </>
 }
 

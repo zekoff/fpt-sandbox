@@ -1,57 +1,30 @@
-import { Button, Container } from '@mui/material';
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getDatabase, ref, onValue } from "firebase/database";
-import { useEffect, useState } from 'react';
+import { Container } from '@mui/material';
+import { ref } from "firebase/database";
 import Inventory from './components/Inventory';
 import UserList from './components/UserList';
 import Layout from './components/Layout';
-import { signInWithGoogle } from './util/AuthHelper.js';
 import { Routes, Route } from 'react-router-dom';
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBjYabqy9_P67Ka8Fzwj3ZsXn3CN4HhVkE",
-  authDomain: "fpt-sandbox.firebaseapp.com",
-  databaseURL: "https://fpt-sandbox-default-rtdb.firebaseio.com",
-  projectId: "fpt-sandbox",
-  storageBucket: "fpt-sandbox.appspot.com",
-  messagingSenderId: "620589844068",
-  appId: "1:620589844068:web:2d576ae7d28cbb723fc171",
-  measurementId: "G-CQ2P0875MP"
-};
-
-initializeApp(firebaseConfig);
-const inventoryRef = ref(getDatabase(), 'zekoff/inventory');
-const usersRef = ref(getDatabase(), 'users');
-const authorizedUsersRef = ref(getDatabase(), 'authorized_users');
+import { useDatabase, useDatabaseListData, useUser } from 'reactfire';
+import { SignInButton } from './components/Authentication';
 
 function App(props) {
-  const [inventory, setInventory] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [currentUser, setCurrentUser] = useState(getAuth().currentUser);
-  const [authorizedUserList, setAuthorizedUserList] = useState([]);
-  useEffect(() => {
-    getAuth().onAuthStateChanged(user => setCurrentUser(getAuth().currentUser));
-    onValue(inventoryRef, (snapshot) => {
-      setInventory(snapshot.val());
-    });
-    onValue(usersRef, (snapshot) => {
-      setUsers(snapshot.val());
-    });
-    onValue(authorizedUsersRef, (snapshot) => {
-      setAuthorizedUserList(snapshot.val());
-    });
-  }, []);
+  const { data: currentUser } = useUser();
+  const inventoryRef = ref(useDatabase(), 'zekoff/inventory');
+  const { data:inventory} = useDatabaseListData(inventoryRef);
+  const usersRef = ref(useDatabase(), 'users');
+  const { data: users} = useDatabaseListData(usersRef);
+  const authorizedUsersRef = ref(useDatabase(), 'authorized_users')
+  const { data: authorizedUsers} = useDatabaseListData(authorizedUsersRef);
   if (!currentUser) {
-    return <Button onClick={signInWithGoogle}>Sign In</Button>
+    return <SignInButton />
   }
-  if (!authorizedUserList.includes(currentUser.uid)) return <p>Not authorized.</p>
+  if (!authorizedUsers?.includes(currentUser.uid)) return <p>Not authorized.</p>
   return (
     <Container>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index path="users" element={<UserList users={users} />} />
-          <Route path="inventory" element={<Inventory inventory={inventory} firebaseDb={inventoryRef} />} />
+          <Route path="inventory" element={<Inventory inventory={inventory} />} />
         </Route>
       </Routes>
     </Container>
