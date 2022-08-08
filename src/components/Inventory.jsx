@@ -2,29 +2,25 @@ import { IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText,
 import TextField from "@mui/material/TextField";
 import DeleteIcon from "@mui/icons-material/Delete"
 import { useState } from "react";
-import { set, ref } from "firebase/database";
+import { ref, push, remove, child } from "firebase/database";
 import ImageMapping from "../util/ImageMapping"
 import { useDatabase } from "reactfire";
 
-function addInventoryItem(newItemText, setNewItemText, inventory, dbRef) {
-    set(dbRef, [
-        ...inventory,
-        newItemText
-    ])
+function addInventoryItem(newItemText, setNewItemText, dbRef) {
+    push(dbRef, newItemText);
     setNewItemText("");
 }
 
-function removeInventoryItem(item, inventory, inventoryRef) {
-    const trimmedInventory = inventory.filter(element => element !== item);
-    set(inventoryRef, trimmedInventory);
+function removeInventoryItem(itemKey, inventoryRef) {
+    remove(child(inventoryRef, itemKey))
 }
 
 function Inventory(props) {
     const [newItemText, setNewItemText] = useState("");
     const inventoryRef = ref(useDatabase(), 'zekoff/inventory');
-    const inventory_list = props.inventory.map(item =>
-        <ListItem key={item} disablePadding secondaryAction={
-            <IconButton onClick={() => removeInventoryItem(item, props.inventory, inventoryRef)}>
+    const inventoryList = Object.entries(props.inventory || {}).map(([key, value]) =>
+        <ListItem key={key} disablePadding secondaryAction={
+            <IconButton onClick={() => removeInventoryItem(key, inventoryRef)}>
                 <DeleteIcon />
             </IconButton>
         }>
@@ -33,19 +29,19 @@ function Inventory(props) {
                     {/* <CategoryIcon /> */}
                     {ImageMapping['Health Kit']}
                 </ListItemIcon>
-                <ListItemText primary={item} />
+                <ListItemText primary={value} />
             </ListItemButton>
         </ListItem>
     );
     return <>
         <Typography variant="h4">Inventory</Typography>
         <List>
-            {inventory_list}
+            {inventoryList}
         </List>
         <form
             onSubmit={(event) => {
                 event.preventDefault();
-                addInventoryItem(newItemText, setNewItemText, props.inventory, inventoryRef);
+                if (newItemText) addInventoryItem(newItemText, setNewItemText, inventoryRef);
             }}
         >
             <TextField
