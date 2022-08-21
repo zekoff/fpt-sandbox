@@ -4,9 +4,9 @@ import { CssBaseline } from '@mui/material';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
-import { AuthProvider, FirebaseAppProvider, useFirebaseApp, DatabaseProvider } from 'reactfire';
+import { AuthProvider, FirebaseAppProvider, useFirebaseApp, FirestoreProvider } from 'reactfire';
 import { getAuth } from 'firebase/auth';
-import { getDatabase } from 'firebase/database';
+import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBjYabqy9_P67Ka8Fzwj3ZsXn3CN4HhVkE",
@@ -22,9 +22,9 @@ const firebaseConfig = {
 function FirebaseWrapper(props) {
   return (
     <AuthProvider sdk={getAuth(useFirebaseApp())}>
-      <DatabaseProvider sdk={getDatabase(useFirebaseApp())}>
+      <FirestoreProvider sdk={getFirestore(useFirebaseApp())}>
         <App />
-      </DatabaseProvider>
+      </FirestoreProvider>
     </AuthProvider>
   )
 }

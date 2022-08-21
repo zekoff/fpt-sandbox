@@ -17,10 +17,12 @@ function removeInventoryItem(itemKey, inventoryRef) {
 
 function Inventory(props) {
     const [newItemText, setNewItemText] = useState("");
-    const inventoryRef = ref(useDatabase(), 'zekoff/inventory');
-    const inventoryList = Object.entries(props.inventory || {}).map(([key, value]) =>
-        <ListItem key={key} disablePadding secondaryAction={
-            <IconButton onClick={() => removeInventoryItem(key, inventoryRef)}>
+    // const inventoryRef = ref(useDatabase(), 'zekoff/inventory');
+    const inventoryRef = null;
+    console.log(props.inventory);
+    const inventoryList = (props.inventory || []).map((item) =>
+        <ListItem key={item} disablePadding secondaryAction={
+            <IconButton onClick={() => removeInventoryItem(item, inventoryRef)}>
                 <DeleteIcon />
             </IconButton>
         }>
@@ -29,7 +31,7 @@ function Inventory(props) {
                     {/* <CategoryIcon /> */}
                     {ImageMapping['Health Kit']}
                 </ListItemIcon>
-                <ListItemText primary={value} />
+                <ListItemText primary={item} />
             </ListItemButton>
         </ListItem>
     );
